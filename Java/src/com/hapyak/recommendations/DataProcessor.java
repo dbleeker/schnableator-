@@ -13,5 +13,5 @@ public interface DataProcessor
 	
 	void processHistorySession(String fileName, List<JSONObject> historySessionProjectList);
 	
-	JSONArray getRecommendationsForCurrentSession(String customerID, List<JSONObject> currentSessionProjectList, int maximumNumberOfRecommendations, boolean includeDetails);
+	JSONArray getRecommendationsForCurrentSession(String groupID, List<JSONObject> currentSessionProjectList, int maximumNumberOfRecommendations, boolean includeDetails);
 }

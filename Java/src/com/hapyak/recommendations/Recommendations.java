@@ -344,7 +344,7 @@ public class Recommendations implements HTTPServerDelegate
     	JSONObject jsonObject;
     	List<JSONObject> currentSessionProjectList;
         OutputStream outputStream;
-    	String a, customerID, errorMessage;
+    	String a, groupID, errorMessage;
     	String jsonText = null;
     	String[] projectIDs;
     	
@@ -355,11 +355,11 @@ public class Recommendations implements HTTPServerDelegate
 	    		if (! method.equals("GET"))
 	    			throw new Exception();
 	    		//
-	        	customerID = queryParameterMap.get("customerID");
-	        	if (customerID == null)
+	        	groupID = queryParameterMap.get("groupID");
+	        	if (groupID == null)
 	    			throw new Exception();
-	        	customerID = customerID.trim();
-	        	if (customerID.length() == 0)
+	        	groupID = groupID.trim();
+	        	if (groupID.length() == 0)
 	    			throw new Exception();
 	        	//
 	        	a = queryParameterMap.get("projectIDs");
@@ -407,7 +407,7 @@ public class Recommendations implements HTTPServerDelegate
 	        		currentSessionProjectList.add(jsonObject);
 	        	}
 	        	//
-	        	jsonArray = _dataProcessor.getRecommendationsForCurrentSession(customerID, currentSessionProjectList, maximumNumberOfRecommendations, includeDetails);
+	        	jsonArray = _dataProcessor.getRecommendationsForCurrentSession(groupID, currentSessionProjectList, maximumNumberOfRecommendations, includeDetails);
 	        	//
 	        	jsonText = jsonArray.toString();
 	        	//

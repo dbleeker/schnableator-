@@ -44,10 +44,10 @@ public class GraphDataProcessor implements DataProcessor
 		double[] fractionsWatched;
 		int i, j, size, numberOfPlays;
     	JSONObject jsonObject;
-    	String customerID, projectID, title, fractionWatchedText, projectKey, jsonText, linkKey;
+    	String groupID, projectID, title, fractionWatchedText, projectKey, jsonText, linkKey;
     	String[] projectIDs;
     	
-    	customerID = getCustomerIDFromDataFile(fileName);
+    	groupID = getGroupIDFromDataFile(fileName);
     	//
     	size = historySessionProjectList.size();
     	//
@@ -61,7 +61,7 @@ public class GraphDataProcessor implements DataProcessor
     		projectID = jsonObject.getString("project_id");
     		if (projectID == null)
 				System.out.println("'project_id' field not found.");
-    		projectID = encodeCustomerIDAndProjectID(customerID, projectID);
+    		projectID = encodeGroupIDAndProjectID(groupID, projectID);
 	    	//
     		title = jsonObject.getString("title");
     		if (title == null)
@@ -154,7 +154,7 @@ public class GraphDataProcessor implements DataProcessor
 	
 	
 	@Override
-	public JSONArray getRecommendationsForCurrentSession(String customerID, List<JSONObject> currentSessionProjectList, int maximumNumberOfRecommendations, boolean includeDetails)
+	public JSONArray getRecommendationsForCurrentSession(String groupID, List<JSONObject> currentSessionProjectList, int maximumNumberOfRecommendations, boolean includeDetails)
 	{
 		double fromProjectRating, linkRating, toProjectRating;
 		int i, j, size, fromProjectNumberOfPlays, linkNumberOfPlays, toProjectNumberOfPlays;
@@ -163,7 +163,7 @@ public class GraphDataProcessor implements DataProcessor
 		List<Recommendation> recommendationList, sortedRecommendationList;
 		Recommendation recommendation, tempRecommendation;
 		String fromProjectID, fromProjectTitle, jsonText, toProjectID, toProjectTitle;
-		String[] projectIDs, linkKeys, customerIDAndProjectID;
+		String[] projectIDs, linkKeys, groupIDAndProjectID;
 		
     	//
     	//  create recommendations by looping on each from project and then looping on
@@ -180,7 +180,7 @@ public class GraphDataProcessor implements DataProcessor
     		fromProjectJSONObject = currentSessionProjectList.get(i);
 	    	//
     		fromProjectID = fromProjectJSONObject.getString("project_id");
-    		fromProjectID = encodeCustomerIDAndProjectID(customerID, fromProjectID);
+    		fromProjectID = encodeGroupIDAndProjectID(groupID, fromProjectID);
     		//
     		projectIDs[i] = fromProjectID;
     		//
@@ -312,14 +312,14 @@ public class GraphDataProcessor implements DataProcessor
     		//
     		recommendationJSONObject = new JSONObject();
     		//
-    		customerIDAndProjectID = decodeCustomerIDAndProjectID(recommendation._toProjectID);
-    		recommendationJSONObject.put("projectID", customerIDAndProjectID[1]);
+    		groupIDAndProjectID = decodeGroupIDAndProjectID(recommendation._toProjectID);
+    		recommendationJSONObject.put("projectID", groupIDAndProjectID[1]);
     		recommendationJSONObject.put("title", recommendation._toProjectTitle);
     		//
     		if (includeDetails)
     		{
-	    		customerIDAndProjectID = decodeCustomerIDAndProjectID(recommendation._fromProjectID);
-	    		recommendationJSONObject.put("fromProjectID", customerIDAndProjectID[1]);
+	    		groupIDAndProjectID = decodeGroupIDAndProjectID(recommendation._fromProjectID);
+	    		recommendationJSONObject.put("fromProjectID", groupIDAndProjectID[1]);
 	    		recommendationJSONObject.put("fromProjectTitle", recommendation._fromProjectTitle);
 	    		recommendationJSONObject.put("fromProjectNumberOfPlays", recommendation._fromProjectNumberOfPlays);
 	    		recommendationJSONObject.put("fromProjectRating", recommendation._fromProjectRating);
@@ -327,8 +327,8 @@ public class GraphDataProcessor implements DataProcessor
 	    		recommendationJSONObject.put("linkNumberOfPlays", recommendation._linkNumberOfPlays);
 	    		recommendationJSONObject.put("linkRating", recommendation._linkRating);
 	    		//
-	    		customerIDAndProjectID = decodeCustomerIDAndProjectID(recommendation._toProjectID);
-	    		recommendationJSONObject.put("toProjectID", customerIDAndProjectID[1]);
+	    		groupIDAndProjectID = decodeGroupIDAndProjectID(recommendation._toProjectID);
+	    		recommendationJSONObject.put("toProjectID", groupIDAndProjectID[1]);
 	    		recommendationJSONObject.put("toProjectTitle", recommendation._toProjectTitle);
 	    		recommendationJSONObject.put("toProjectNumberOfPlays", recommendation._toProjectNumberOfPlays);
 	    		recommendationJSONObject.put("toProjectRating", recommendation._toProjectRating);
@@ -361,31 +361,31 @@ public class GraphDataProcessor implements DataProcessor
 	}
 	
 	
-	static private String getCustomerIDFromDataFile(String fileName)
+	static private String getGroupIDFromDataFile(String fileName)
 	{
 		return (fileName.substring(0, fileName.indexOf('-')));
 	}
 	
 	
-	static private String encodeCustomerIDAndProjectID(String customerID, String projectID)
+	static private String encodeGroupIDAndProjectID(String groupID, String projectID)
 	{
-		return (customerID + "-" + projectID);
+		return (groupID + "-" + projectID);
 	}
 	
 	
-	static private String[] decodeCustomerIDAndProjectID(String encodedProjectID)
+	static private String[] decodeGroupIDAndProjectID(String encodedProjectID)
 	{
 		int index;
-		String[] customerIDAndProjectID;
+		String[] groupIDAndProjectID;
 		
-		customerIDAndProjectID = new String[2];
+		groupIDAndProjectID = new String[2];
 		//
 		index = encodedProjectID.indexOf('-');
 		//
-		customerIDAndProjectID[0] = encodedProjectID.substring(0, index);
-		customerIDAndProjectID[1] = encodedProjectID.substring(index + 1);
+		groupIDAndProjectID[0] = encodedProjectID.substring(0, index);
+		groupIDAndProjectID[1] = encodedProjectID.substring(index + 1);
 		//
-		return (customerIDAndProjectID);
+		return (groupIDAndProjectID);
 	}
 	
 	

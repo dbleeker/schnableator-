@@ -8,18 +8,28 @@ import redis.clients.jedis.*;
 public class RedisDatabase implements Database
 {
 	private Jedis _jedis;
+	private Object _syncObject;
 
 	
 	public RedisDatabase(String ipAddressOrDomainName, int portNumber)
-    {
+	{
+		_syncObject = new Object();
+		//
 		_jedis = new Jedis(ipAddressOrDomainName, portNumber);
-    }
+	}
 	
 	
 	@Override
 	public void destruct()
 	{
-		_jedis.disconnect();
+		synchronized (_syncObject)
+		{
+			if (_jedis != null)
+			{
+				_jedis.disconnect();
+				_jedis = null;
+			}
+		}
 	}
 	
 	
@@ -31,7 +41,10 @@ public class RedisDatabase implements Database
 		Set<String> keySet;
 		String[] keys;
 		
-		keySet = _jedis.keys(keyWildCard);
+		synchronized (_syncObject)
+		{
+			keySet = _jedis.keys(keyWildCard);
+		}
 		//
 		size = keySet.size();
 		//
@@ -45,17 +58,23 @@ public class RedisDatabase implements Database
 		return (keys);
 	}
 
-    
-    @Override
-    public String read(String key)
-    {
-		return (_jedis.get(key));
-    }
 
-    
-    @Override
-    public void write(String key, String value)
-    {
-		_jedis.set(key, value);
-    }
+	@Override
+	public String read(String key)
+	{
+		synchronized (_syncObject)
+		{
+			return (_jedis.get(key));
+		}
+	}
+
+
+	@Override
+	public void write(String key, String value)
+	{
+		synchronized (_syncObject)
+		{
+			_jedis.set(key, value);
+		}
+	}
 }
